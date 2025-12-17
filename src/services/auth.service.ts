@@ -6,4 +6,7 @@ export const authService = {
     const response = await httpClient.post<LoginResponse>('/auth/login', data);
     return response.data;
   },
+  logout: async (): Promise<void> => {
+    await httpClient.post('/auth/logout');
+  },
 };
