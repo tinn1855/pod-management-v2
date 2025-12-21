@@ -1,6 +1,14 @@
 import { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { ChevronRight, Home, Inbox, LogOut, Settings } from 'lucide-react';
+import {
+  ChevronRight,
+  Home,
+  Inbox,
+  LogOut,
+  Settings,
+  Shield,
+  Users,
+} from 'lucide-react';
 import {
   Sidebar,
   SidebarContent,
@@ -59,6 +67,23 @@ const navGroups: NavGroup[] = [
         url: '/inbox',
         icon: Inbox,
         tooltip: 'Inbox',
+      },
+    ],
+  },
+  {
+    label: 'Management',
+    items: [
+      {
+        title: 'Roles',
+        url: '/roles',
+        icon: Users,
+        tooltip: 'Roles Management',
+      },
+      {
+        title: 'Permissions',
+        url: '/permissions',
+        icon: Shield,
+        tooltip: 'Permissions Management',
       },
     ],
   },
