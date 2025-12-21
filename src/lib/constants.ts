@@ -9,5 +9,6 @@ export const ROUTES = {
   HOME: '/',
   ROLES: '/roles',
   PERMISSIONS: '/permissions',
+  TEAMS: '/teams',
 } as const;
 

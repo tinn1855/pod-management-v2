@@ -8,6 +8,7 @@ import {
   Settings,
   Shield,
   Users,
+  Users2,
 } from 'lucide-react';
 import {
   Sidebar,
@@ -84,6 +85,12 @@ const navGroups: NavGroup[] = [
         url: '/permissions',
         icon: Shield,
         tooltip: 'Permissions Management',
+      },
+      {
+        title: 'Teams',
+        url: '/teams',
+        icon: Users2,
+        tooltip: 'Teams Management',
       },
     ],
   },
