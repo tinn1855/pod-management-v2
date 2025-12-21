@@ -7,5 +7,7 @@ export const STORAGE_KEYS = {
 export const ROUTES = {
   LOGIN: '/login',
   HOME: '/',
+  ROLES: '/roles',
+  PERMISSIONS: '/permissions',
 } as const;
 

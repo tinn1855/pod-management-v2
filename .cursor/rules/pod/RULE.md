@@ -10,3 +10,4 @@ alwaysApply: true
 - API = services
 - RHF + Zod cho mọi form
 - SOLID / DRY / KISS luôn được ưu tiên
+- Sử dụng thư viện Shadcn ui

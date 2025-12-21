@@ -2,6 +2,8 @@ import { Outlet, Route, Routes } from 'react-router-dom';
 import { LoginPage } from '@/pages/login';
 import { AuthGuard, GuestGuard } from './guards';
 import { DashboardPage } from '@/pages/dashboard';
+import { RolesPage } from '@/pages/roles';
+import { PermissionsPage } from '@/pages/permissions';
 import { NotFoundPage } from '@/pages/not-found';
 import DefaultLayout from '@/layout/default';
 
@@ -29,6 +31,22 @@ export function AppRoutes() {
           element={
             <AuthGuard>
               <DashboardPage />
+            </AuthGuard>
+          }
+        />
+        <Route
+          path="/roles"
+          element={
+            <AuthGuard>
+              <RolesPage />
+            </AuthGuard>
+          }
+        />
+        <Route
+          path="/permissions"
+          element={
+            <AuthGuard>
+              <PermissionsPage />
             </AuthGuard>
           }
         />
