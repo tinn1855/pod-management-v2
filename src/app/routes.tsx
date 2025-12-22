@@ -1,10 +1,13 @@
 import { Outlet, Route, Routes } from 'react-router-dom';
 import { LoginPage } from '@/pages/login';
+import { ChangePasswordPage } from '@/pages/change-password';
+import { VerifyEmailPage } from '@/pages/verify-email';
 import { AuthGuard, GuestGuard } from './guards';
 import { DashboardPage } from '@/pages/dashboard';
 import { RolesPage } from '@/pages/roles';
 import { PermissionsPage } from '@/pages/permissions';
 import { TeamsPage } from '@/pages/teams';
+import { UsersPage } from '@/pages/users';
 import { NotFoundPage } from '@/pages/not-found';
 import DefaultLayout from '@/layout/default';
 
@@ -19,6 +22,15 @@ export function AppRoutes() {
           </GuestGuard>
         }
       />
+      <Route
+        path="/change-password"
+        element={
+          <AuthGuard>
+            <ChangePasswordPage />
+          </AuthGuard>
+        }
+      />
+      <Route path="/verify-email" element={<VerifyEmailPage />} />
       <Route
         path="/"
         element={
@@ -56,6 +68,14 @@ export function AppRoutes() {
           element={
             <AuthGuard>
               <TeamsPage />
+            </AuthGuard>
+          }
+        />
+        <Route
+          path="/users"
+          element={
+            <AuthGuard>
+              <UsersPage />
             </AuthGuard>
           }
         />
