@@ -5,6 +5,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
+import { formatDate } from '@/utils/date.utils';
 import type { Team } from '@/types/team.types';
 
 interface TeamDetailDialogProps {
@@ -55,13 +56,9 @@ export function TeamDetailDialog({
             </p>
           </div>
           <div className="flex gap-2 text-xs text-muted-foreground pt-2 border-t">
-            <span>
-              Created: {new Date(team.createdAt).toLocaleDateString()}
-            </span>
+            <span>Created: {formatDate(team.createdAt)}</span>
             <span>•</span>
-            <span>
-              Updated: {new Date(team.updatedAt).toLocaleDateString()}
-            </span>
+            <span>Updated: {formatDate(team.updatedAt)}</span>
           </div>
         </div>
       </DialogContent>

@@ -6,6 +6,7 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 import { formatPermissionName } from '@/lib/utils';
+import { formatDate } from '@/utils/date.utils';
 import type { Role } from '@/types/role.types';
 
 interface RoleDetailDialogProps {
@@ -77,13 +78,9 @@ export function RoleDetailDialog({
             )}
           </div>
           <div className="flex gap-2 text-xs text-muted-foreground pt-2 border-t">
-            <span>
-              Created: {new Date(role.createdAt).toLocaleDateString()}
-            </span>
+            <span>Created: {formatDate(role.createdAt)}</span>
             <span>•</span>
-            <span>
-              Updated: {new Date(role.updatedAt).toLocaleDateString()}
-            </span>
+            <span>Updated: {formatDate(role.updatedAt)}</span>
           </div>
         </div>
       </DialogContent>

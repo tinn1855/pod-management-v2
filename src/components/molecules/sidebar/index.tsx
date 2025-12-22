@@ -7,6 +7,7 @@ import {
   LogOut,
   Settings,
   Shield,
+  User,
   Users,
   Users2,
 } from 'lucide-react';
@@ -92,6 +93,12 @@ const navGroups: NavGroup[] = [
         icon: Users2,
         tooltip: 'Teams Management',
       },
+      {
+        title: 'Users',
+        url: '/users',
+        icon: User,
+        tooltip: 'Users Management',
+      },
     ],
   },
 ];
@@ -126,6 +133,21 @@ export function AppSidebar() {
       .slice(0, 2);
   };
 
+  // Check if user is admin or super admin
+  const isAdminOrSuperAdmin = () => {
+    if (!user?.role?.name) return false;
+    const roleName = user.role.name.toUpperCase();
+    return roleName === 'ADMIN' || roleName === 'SUPER_ADMIN';
+  };
+
+  // Filter navGroups to only show Management for admin/super admin
+  const filteredNavGroups = navGroups.filter((group) => {
+    if (group.label === 'Management') {
+      return isAdminOrSuperAdmin();
+    }
+    return true;
+  });
+
   return (
     <Sidebar collapsible="icon">
       <SidebarHeader>
@@ -142,7 +164,7 @@ export function AppSidebar() {
       </SidebarHeader>
       <SidebarContent>
         <ScrollArea>
-          {navGroups.map((group, groupIndex) => (
+          {filteredNavGroups.map((group, groupIndex) => (
             <SidebarGroup key={group.label || groupIndex}>
               {group.label && (
                 <SidebarGroupLabel>{group.label}</SidebarGroupLabel>
@@ -169,7 +191,9 @@ export function AppSidebar() {
                   })}
                 </SidebarMenu>
               </SidebarGroupContent>
-              {groupIndex < navGroups.length - 1 && <SidebarSeparator />}
+              {groupIndex < filteredNavGroups.length - 1 && (
+                <SidebarSeparator />
+              )}
             </SidebarGroup>
           ))}
         </ScrollArea>
@@ -205,7 +229,7 @@ export function AppSidebar() {
                   align="end"
                   sideOffset={4}
                 >
-                  <DropdownMenuLabel className="p-0 font-normal">
+                  <DropdownMenuLabel>
                     <div className="flex flex-col space-y-1 p-2">
                       <p className="text-sm font-medium leading-none">
                         {user.name}

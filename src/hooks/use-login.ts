@@ -12,19 +12,33 @@ export function useLogin() {
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
-  const login = async (data: LoginRequest) => {
+  const login = async (data: LoginRequest, rememberMe: boolean = true) => {
     setIsLoading(true)
     setError(null)
 
     try {
       const response = await authService.login(data)
-      authUtils.setAuth(
-        response.accessToken,
-        response.refreshToken,
-        response.user
-      )
+      
+      // If tempToken is provided, use it instead of accessToken
+      if (response.tempToken) {
+        authUtils.setTempToken(response.tempToken, response.user, rememberMe)
+      } else if (response.accessToken && response.refreshToken) {
+        authUtils.setAuth(
+          response.accessToken,
+          response.refreshToken,
+          response.user,
+          rememberMe
+        )
+      }
+      
       toast.success("Login successful!")
-      navigate(ROUTES.HOME)
+      
+      // Redirect to change password if mustChangePassword is true
+      if (response.user.mustChangePassword) {
+        navigate(ROUTES.CHANGE_PASSWORD)
+      } else {
+        navigate(ROUTES.HOME)
+      }
     } catch (err: unknown) {
       let errorMessage = "Login failed. Please try again."
 
@@ -44,6 +58,7 @@ export function useLogin() {
         : "Login failed. Please try again."
 
       setError(finalErrorMessage)
+      toast.error(finalErrorMessage)
     } finally {
       setIsLoading(false)
     }

@@ -39,7 +39,7 @@ export function LoginPage() {
 
   const onSubmit = async (data: LoginFormData) => {
     try {
-      await login(data);
+      await login(data, rememberMe);
     } catch {
       // Error is handled in hook
     }
