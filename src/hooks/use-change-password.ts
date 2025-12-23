@@ -4,8 +4,8 @@ import { AxiosError } from 'axios';
 import { toast } from 'sonner';
 import { authService } from '@/services/auth.service';
 import { authUtils } from '@/lib/auth';
-import { ROUTES } from '@/lib/constants';
-import type { ChangePasswordFormData } from '@/lib/change-password.schema';
+import { ROUTES } from '@/constants';
+import type { ChangePasswordFormData } from '@/schemas/change-password.schema';
 import type { User } from '@/types/auth.types';
 
 export function useChangePassword() {

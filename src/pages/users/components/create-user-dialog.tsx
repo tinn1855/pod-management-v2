@@ -26,7 +26,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Plus } from 'lucide-react';
-import type { CreateUserFormData } from '@/lib/user.schema';
+import type { CreateUserFormData } from '@/schemas/user.schema';
 import type { Role } from '@/types/role.types';
 import type { Team } from '@/types/team.types';
 

@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { authUtils } from './auth';
-import { ROUTES } from './constants';
+import { ROUTES } from '@/constants';
 
 export const httpClient = axios.create({
   baseURL: import.meta.env.VITE_BASE_URL || 'https://pod-api-v2.onrender.com',

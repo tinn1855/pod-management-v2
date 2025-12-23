@@ -19,7 +19,7 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { Plus } from 'lucide-react';
-import type { CreateRoleFormData } from '@/lib/role.schema';
+import type { CreateRoleFormData } from '@/schemas/role.schema';
 
 interface CreateRoleDialogProps {
   open: boolean;

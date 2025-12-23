@@ -19,7 +19,7 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { Plus } from 'lucide-react';
-import type { CreateTeamFormData } from '@/lib/team.schema';
+import type { CreateTeamFormData } from '@/schemas/team.schema';
 
 interface CreateTeamDialogProps {
   open: boolean;

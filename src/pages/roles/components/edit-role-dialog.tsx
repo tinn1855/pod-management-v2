@@ -17,7 +17,7 @@ import {
   FormLabel,
   FormMessage,
 } from '@/components/ui/form';
-import type { UpdateRoleFormData } from '@/lib/role.schema';
+import type { UpdateRoleFormData } from '@/schemas/role.schema';
 
 interface EditRoleDialogProps {
   open: boolean;

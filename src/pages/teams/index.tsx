@@ -6,6 +6,7 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
+import { Heading } from '@/components/ui/heading';
 import { useTeamsPage } from './hooks/use-teams-page';
 import { TeamsTable } from './components/teams-table';
 import { CreateTeamDialog } from './components/create-team-dialog';
@@ -45,9 +46,7 @@ export function TeamsPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">
-            Teams Management
-          </h1>
+          <Heading variant="h1">Teams Management</Heading>
           <p className="text-muted-foreground">
             Manage teams and their members
           </p>

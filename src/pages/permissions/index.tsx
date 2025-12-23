@@ -37,6 +37,8 @@ import {
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
+import { Heading } from '@/components/ui/heading';
+import { ItemsPerPageSelector } from '@/components/molecules/items-per-page-selector';
 import { formatPermissionName } from '@/lib/utils';
 import type { PermissionResponse } from '@/types/role.types';
 
@@ -259,6 +261,10 @@ export function PermissionsPage() {
     setPagination((prev) => ({ ...prev, page: 1 }));
   };
 
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    handleSearchInputChange(e.target.value);
+  };
+
   const renderPaginationItems = () => {
     const items = [];
     const currentPage = pagination.page;
@@ -339,9 +345,7 @@ export function PermissionsPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">
-            Permissions Management
-          </h1>
+          <Heading variant="h1">Permissions Management</Heading>
           <p className="text-muted-foreground">
             View all available permissions in the system
           </p>
@@ -369,7 +373,7 @@ export function PermissionsPage() {
               <Input
                 placeholder="Search permissions..."
                 value={searchInput}
-                onChange={(e) => handleSearchInputChange(e.target.value)}
+                onChange={handleSearchChange}
                 className="pl-10 pr-10"
               />
               {searchInput && (
@@ -494,23 +498,10 @@ export function PermissionsPage() {
           {/* Pagination */}
           {pagination.totalPages > 1 && (
             <div className="mt-6 flex items-center justify-between">
-              <div className="w-[100px]">
-                <Select
-                  value={pagination.limit.toString()}
-                  onValueChange={handleLimitChange}
-                  disabled={isLoading}
-                >
-                  <SelectTrigger id="limit-select">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent className="min-w-[100px]">
-                    <SelectItem value="10">10</SelectItem>
-                    <SelectItem value="20">20</SelectItem>
-                    <SelectItem value="30">30</SelectItem>
-                    <SelectItem value="50">50</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
+              <ItemsPerPageSelector
+                total={pagination.total}
+                currentLimit={pagination.limit}
+              />
               <div>
                 <Pagination>
                   <PaginationContent>

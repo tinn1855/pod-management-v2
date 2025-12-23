@@ -37,6 +37,14 @@ export function RolesTable({
   onAssignPermissions,
   onPageChange,
 }: RolesTableProps) {
+  const handlePreviousPage = () => {
+    onPageChange(pagination.page - 1);
+  };
+
+  const handleNextPage = () => {
+    onPageChange(pagination.page + 1);
+  };
+
   if (isInitialLoading) {
     return (
       <Table>
@@ -94,56 +102,74 @@ export function RolesTable({
           </TableRow>
         </TableHeader>
         <TableBody>
-          {roles.map((role) => (
-            <TableRow key={role.id}>
-              <TableCell className="font-medium">{role.name}</TableCell>
-              <TableCell>
-                {role.description || (
-                  <span className="text-muted-foreground">-</span>
-                )}
-              </TableCell>
-              <TableCell>
-                {role.userCount !== undefined ? role.userCount : '-'}
-              </TableCell>
-              <TableCell className="text-right">
-                <div className="flex items-center justify-end gap-2">
-                  <Button
-                    variant="outline"
-                    size="icon"
-                    onClick={() => onViewDetail(role)}
-                    title="View Details"
-                  >
-                    <Eye />
-                  </Button>
-                  <Button
-                    variant="outline"
-                    size="icon"
-                    onClick={() => onAssignPermissions(role)}
-                    title="Assign Permissions"
-                  >
-                    <Shield />
-                  </Button>
-                  <Button
-                    variant="outline"
-                    size="icon"
-                    onClick={() => onEdit(role)}
-                    title="Edit Role"
-                  >
-                    <Pencil />
-                  </Button>
-                  <Button
-                    variant="outline"
-                    className="text-destructive"
-                    size="icon"
-                    onClick={() => onDelete(role.id)}
-                    title="Delete Role"
-                  >
-                    <Trash2 />
-                  </Button>
-                </div>
-              </TableCell>
-            </TableRow>
-          ))}
+          {roles.map((role) => {
+            const handleViewDetail = () => {
+              onViewDetail(role);
+            };
+
+            const handleAssignPermissions = () => {
+              onAssignPermissions(role);
+            };
+
+            const handleEdit = () => {
+              onEdit(role);
+            };
+
+            const handleDelete = () => {
+              onDelete(role.id);
+            };
+
+            return (
+              <TableRow key={role.id}>
+                <TableCell className="font-medium">{role.name}</TableCell>
+                <TableCell>
+                  {role.description || (
+                    <span className="text-muted-foreground">-</span>
+                  )}
+                </TableCell>
+                <TableCell>
+                  {role.userCount !== undefined ? role.userCount : '-'}
+                </TableCell>
+                <TableCell className="text-right">
+                  <div className="flex items-center justify-end gap-2">
+                    <Button
+                      variant="outline"
+                      size="icon"
+                      onClick={handleViewDetail}
+                      title="View Details"
+                    >
+                      <Eye />
+                    </Button>
+                    <Button
+                      variant="outline"
+                      size="icon"
+                      onClick={handleAssignPermissions}
+                      title="Assign Permissions"
+                    >
+                      <Shield />
+                    </Button>
+                    <Button
+                      variant="outline"
+                      size="icon"
+                      onClick={handleEdit}
+                      title="Edit Role"
+                    >
+                      <Pencil />
+                    </Button>
+                    <Button
+                      variant="outline"
+                      className="text-destructive"
+                      size="icon"
+                      onClick={handleDelete}
+                      title="Delete Role"
+                    >
+                      <Trash2 />
+                    </Button>
+                  </div>
+                </TableCell>
+              </TableRow>
+            );
+          })}
         </TableBody>
       </Table>
 

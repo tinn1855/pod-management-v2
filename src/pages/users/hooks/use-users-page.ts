@@ -11,7 +11,13 @@ import {
   updateUserSchema,
   type CreateUserFormData,
   type UpdateUserFormData,
-} from '@/lib/user.schema';
+} from '@/schemas/user.schema';
+import {
+  PAGINATION,
+  FILTER_VALUES,
+  DEBOUNCE,
+  USER_STATUS,
+} from '@/constants';
 import type { User } from '@/types/user.types';
 import type { Role } from '@/types/role.types';
 import type { Team } from '@/types/team.types';
@@ -37,23 +43,32 @@ export function useUsersPage() {
   const [searchInput, setSearchInput] = useState(
     searchParams.get('search') || ''
   );
-  const debouncedSearchQuery = useDebounce(searchInput, 500);
+  const debouncedSearchQuery = useDebounce(
+    searchInput,
+    DEBOUNCE.SEARCH_DELAY
+  );
   const [roleFilter, setRoleFilter] = useState<string>(
-    searchParams.get('roleFilter') || 'all'
+    searchParams.get('roleFilter') || FILTER_VALUES.ALL
   );
   const [teamFilter, setTeamFilter] = useState<string>(
-    searchParams.get('teamFilter') || 'all'
+    searchParams.get('teamFilter') || FILTER_VALUES.ALL
   );
   const [pagination, setPagination] = useState({
-    page: 1,
-    limit: 10,
+    page: PAGINATION.DEFAULT_PAGE,
+    limit: PAGINATION.DEFAULT_LIMIT,
     total: 0,
     totalPages: 0,
   });
 
   // Get page and limit from URL params
-  const pageFromUrl = parseInt(searchParams.get('page') || '1', 10);
-  const limitFromUrl = parseInt(searchParams.get('limit') || '10', 10);
+  const pageFromUrl = parseInt(
+    searchParams.get('page') || String(PAGINATION.DEFAULT_PAGE),
+    10
+  );
+  const limitFromUrl = parseInt(
+    searchParams.get('limit') || String(PAGINATION.DEFAULT_LIMIT),
+    10
+  );
 
   const [isCreateOpen, setIsCreateOpen] = useState(false);
   const [isEditOpen, setIsEditOpen] = useState(false);
@@ -79,15 +94,15 @@ export function useUsersPage() {
       name: '',
       roleId: '',
       teamId: undefined,
-      status: 'ACTIVE',
+      status: USER_STATUS.ACTIVE,
     },
   });
 
   const loadAllUsers = async () => {
     setIsInitialLoading(true);
     const allData: User[] = [];
-    let currentPage = 1;
-    const maxLimit = 100; // API limit
+    let currentPage = PAGINATION.DEFAULT_PAGE;
+    const maxLimit = PAGINATION.API_MAX_LIMIT;
     let hasMore = true;
 
     // Load all users by paginating through all pages
@@ -257,7 +272,7 @@ export function useUsersPage() {
       name: user.name,
       roleId: user.role.id,
       teamId: user.team?.id || undefined,
-      status: user.status || 'ACTIVE',
+      status: user.status || USER_STATUS.ACTIVE,
     });
     setIsEditOpen(true);
   };

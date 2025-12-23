@@ -2,7 +2,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Lock, Eye, EyeOff } from 'lucide-react';
 import { useState } from 'react';
-import { changePasswordSchema, type ChangePasswordFormData } from '@/lib/change-password.schema';
+import { changePasswordSchema, type ChangePasswordFormData } from '@/schemas/change-password.schema';
 import { useChangePassword } from '@/hooks/use-change-password';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';

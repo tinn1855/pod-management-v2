@@ -1,6 +1,6 @@
 import { Navigate, useLocation } from 'react-router-dom';
 import { authUtils } from '@/lib/auth';
-import { ROUTES } from '@/lib/constants';
+import { ROUTES } from '@/constants';
 
 export function AuthGuard({ children }: { children: React.ReactNode }) {
   const location = useLocation();

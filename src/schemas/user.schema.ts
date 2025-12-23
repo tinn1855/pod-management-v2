@@ -5,7 +5,16 @@ export const createUserSchema = z.object({
     .string()
     .min(1, 'Name is required')
     .min(2, 'Name must be at least 2 characters'),
-  email: z.string().email('Invalid email address'),
+  email: z
+    .string()
+    .refine(
+      (val) => {
+        if (!val || val.trim() === '') return true;
+        return z.string().email().safeParse(val).success;
+      },
+      { message: 'Invalid email address' }
+    )
+    .optional(),
   password: z
     .string()
     .refine((val) => !val || val.length >= 6, {
@@ -30,13 +39,6 @@ export const updateUserSchema = z.object({
     .string()
     .min(1, 'Name is required')
     .min(2, 'Name must be at least 2 characters')
-    .optional(),
-  email: z.string().email('Invalid email address').optional(),
-  password: z
-    .string()
-    .refine((val) => !val || val.length >= 6, {
-      message: 'Password must be at least 6 characters',
-    })
     .optional(),
   roleId: z.string().uuid('Invalid role ID').optional(),
   teamId: z.string().optional(),

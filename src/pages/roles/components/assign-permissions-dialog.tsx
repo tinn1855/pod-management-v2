@@ -17,7 +17,7 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { formatPermissionName } from '@/lib/utils';
-import type { AssignPermissionsFormData } from '@/lib/role.schema';
+import type { AssignPermissionsFormData } from '@/schemas/role.schema';
 import type { PermissionResponse } from '@/types/role.types';
 
 interface AssignPermissionsDialogProps {

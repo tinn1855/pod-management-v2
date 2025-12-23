@@ -10,7 +10,7 @@ import {
   type CreateRoleFormData,
   type UpdateRoleFormData,
   type AssignPermissionsFormData,
-} from '@/lib/role.schema';
+} from '@/schemas/role.schema';
 import type { Role, PermissionResponse } from '@/types/role.types';
 
 export function useRolesPage() {

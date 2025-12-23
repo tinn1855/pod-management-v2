@@ -14,6 +14,7 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from '@/components/ui/pagination';
+import { PAGINATION } from '@/constants';
 
 interface ItemsPerPageSelectProps {
   value: number;
@@ -40,7 +41,7 @@ interface PaginationControlsProps {
 export function ItemsPerPageSelect({
   value,
   onChange,
-  options = [10, 20, 50, 100],
+  options = PAGINATION.LIMIT_OPTIONS,
   label = 'Showing per page:',
 }: ItemsPerPageSelectProps) {
   return (
@@ -128,6 +129,41 @@ function handleNextPageClick(
 }
 
 /**
+ * Handle first page click
+ */
+function handleFirstPageClick(
+  e: React.MouseEvent<HTMLAnchorElement>,
+  onPageChange: (page: number) => void
+): void {
+  e.preventDefault();
+  onPageChange(1);
+}
+
+/**
+ * Handle page number click
+ */
+function handlePageNumberClick(
+  e: React.MouseEvent<HTMLAnchorElement>,
+  page: number,
+  onPageChange: (page: number) => void
+): void {
+  e.preventDefault();
+  onPageChange(page);
+}
+
+/**
+ * Handle last page click
+ */
+function handleLastPageClick(
+  e: React.MouseEvent<HTMLAnchorElement>,
+  totalPages: number,
+  onPageChange: (page: number) => void
+): void {
+  e.preventDefault();
+  onPageChange(totalPages);
+}
+
+/**
  * Render pagination items (page numbers with ellipsis)
  */
 function renderPaginationItems(
@@ -142,12 +178,7 @@ function renderPaginationItems(
   if (currentPage > pagesAround + 1) {
     items.push(
       <PaginationItem key={1}>
-        <PaginationLink
-          onClick={(e) => {
-            e.preventDefault();
-            onPageChange(1);
-          }}
-        >
+        <PaginationLink onClick={(e) => handleFirstPageClick(e, onPageChange)}>
           1
         </PaginationLink>
       </PaginationItem>
@@ -170,10 +201,7 @@ function renderPaginationItems(
     items.push(
       <PaginationItem key={i}>
         <PaginationLink
-          onClick={(e) => {
-            e.preventDefault();
-            onPageChange(i);
-          }}
+          onClick={(e) => handlePageNumberClick(e, i, onPageChange)}
           isActive={i === currentPage}
         >
           {i}
@@ -195,10 +223,7 @@ function renderPaginationItems(
     items.push(
       <PaginationItem key={totalPages}>
         <PaginationLink
-          onClick={(e) => {
-            e.preventDefault();
-            onPageChange(totalPages);
-          }}
+          onClick={(e) => handleLastPageClick(e, totalPages, onPageChange)}
         >
           {totalPages}
         </PaginationLink>
@@ -221,7 +246,7 @@ export function PaginationControls({
   currentPage,
   totalPages,
   onPageChange,
-  pagesAround = 2,
+  pagesAround = PAGINATION.PAGES_AROUND,
 }: PaginationControlsProps) {
   // Don't render if only one page or less
   if (totalPages <= 1) {

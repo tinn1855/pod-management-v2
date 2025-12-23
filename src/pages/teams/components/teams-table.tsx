@@ -35,6 +35,14 @@ export function TeamsTable({
   onDelete,
   onPageChange,
 }: TeamsTableProps) {
+  const handlePreviousPage = () => {
+    onPageChange(pagination.page - 1);
+  };
+
+  const handleNextPage = () => {
+    onPageChange(pagination.page + 1);
+  };
+
   if (isInitialLoading) {
     return (
       <Table>
@@ -146,7 +154,7 @@ export function TeamsTable({
             <Button
               variant="outline"
               size="sm"
-              onClick={() => onPageChange(pagination.page - 1)}
+              onClick={handlePreviousPage}
               disabled={pagination.page === 1 || isLoading}
             >
               Previous
@@ -154,7 +162,7 @@ export function TeamsTable({
             <Button
               variant="outline"
               size="sm"
-              onClick={() => onPageChange(pagination.page + 1)}
+              onClick={handleNextPage}
               disabled={pagination.page >= pagination.totalPages || isLoading}
             >
               Next

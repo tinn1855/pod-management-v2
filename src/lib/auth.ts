@@ -1,8 +1,8 @@
-import { STORAGE_KEYS } from './constants';
+import { STORAGE_KEYS } from '@/constants';
 import type { User } from '@/types/auth.types';
 
 // Helper to get storage based on rememberMe preference
-function getStorage(rememberMe: boolean = true): Storage {
+function getStorage(rememberMe = true): Storage {
   return rememberMe ? localStorage : sessionStorage;
 }
 
@@ -44,7 +44,7 @@ export const authUtils = {
     accessToken: string,
     refreshToken: string,
     user: User,
-    rememberMe: boolean = true
+    rememberMe = true
   ): void => {
     const storage = getStorage(rememberMe);
     
@@ -60,7 +60,7 @@ export const authUtils = {
     storage.setItem(STORAGE_KEYS.USER, JSON.stringify(user));
   },
 
-  setTempToken: (tempToken: string, user: User, rememberMe: boolean = true): void => {
+  setTempToken: (tempToken: string, user: User, rememberMe = true): void => {
     const storage = getStorage(rememberMe);
     
     // Clear from both storages first

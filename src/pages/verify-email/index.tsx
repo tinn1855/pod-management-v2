@@ -10,7 +10,7 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
-import { ROUTES } from '@/lib/constants';
+import { ROUTES } from '@/constants';
 
 export function VerifyEmailPage() {
   const [searchParams] = useSearchParams();

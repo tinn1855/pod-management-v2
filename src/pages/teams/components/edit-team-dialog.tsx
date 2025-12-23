@@ -17,7 +17,7 @@ import {
   FormLabel,
   FormMessage,
 } from '@/components/ui/form';
-import type { UpdateTeamFormData } from '@/lib/team.schema';
+import type { UpdateTeamFormData } from '@/schemas/team.schema';
 
 interface EditTeamDialogProps {
   open: boolean;

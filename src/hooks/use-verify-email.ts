@@ -28,7 +28,7 @@ export function useVerifyEmail() {
         }
       } catch (err) {
         // If fetching user fails, continue anyway
-        console.error('Failed to fetch updated user data:', err);
+        // Error is silently ignored as verification was successful
       }
 
       setIsVerified(true);

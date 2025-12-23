@@ -8,6 +8,7 @@ import {
 } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
+import { Heading } from '@/components/ui/heading';
 import {
   Select,
   SelectContent,
@@ -15,10 +16,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import {
-  ItemsPerPageSelect,
-  PaginationControls,
-} from '@/utils/pagination.utils';
+import { PaginationControls } from '@/utils/pagination.utils';
+import { ItemsPerPageSelector } from '@/components/molecules/items-per-page-selector';
+import { PAGINATION } from '@/constants';
 import { useUsersPage } from './hooks/use-users-page';
 import { UsersTable } from './components/users-table';
 import { CreateUserDialog } from './components/create-user-dialog';
@@ -73,13 +73,19 @@ export function UsersPage() {
     isSomeSelected,
   } = useUsersPage();
 
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    handleSearchInputChange(e.target.value);
+  };
+
+  const handleDeleteCancel = () => {
+    setUserToDelete(null);
+  };
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">
-            Users Management
-          </h1>
+          <Heading variant="h1">Users Management</Heading>
           <p className="text-muted-foreground">Manage users and their roles</p>
         </div>
         <CreateUserDialog
@@ -113,7 +119,7 @@ export function UsersPage() {
               <Input
                 placeholder="Search users..."
                 value={searchInput}
-                onChange={(e) => handleSearchInputChange(e.target.value)}
+                onChange={handleSearchChange}
                 className="pl-10 pr-10"
               />
               {searchInput && (
@@ -172,12 +178,11 @@ export function UsersPage() {
             onSelectAll={handleSelectAll}
           />
           <div className="mt-5 flex items-center justify-between">
-            {pagination.total >= 10 && (
-              <ItemsPerPageSelect
-                value={pagination.limit}
-                onChange={handleLimitChange}
-              />
-            )}
+            <ItemsPerPageSelector
+              total={pagination.total}
+              currentLimit={pagination.limit}
+              onLimitChange={handleLimitChange}
+            />
             <PaginationControls
               currentPage={pagination.page}
               totalPages={pagination.totalPages}
@@ -210,7 +215,7 @@ export function UsersPage() {
         users={users}
         isLoading={isLoading}
         onConfirm={handleDeleteConfirm}
-        onCancel={() => setUserToDelete(null)}
+        onCancel={handleDeleteCancel}
       />
     </div>
   );

@@ -38,7 +38,7 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { NavLink } from 'react-router-dom';
 import { useCurrentUser } from '@/hooks/use-current-user';
 import { authUtils } from '@/lib/auth';
-import { ROUTES } from '@/lib/constants';
+import { ROUTES } from '@/constants';
 import { authService } from '@/services/auth.service';
 import { toast } from 'sonner';
 
@@ -115,7 +115,6 @@ export function AppSidebar() {
       await authService.logout();
       toast.success('Logged out successfully');
     } catch (error) {
-      console.error('Logout error:', error);
       toast.error('Failed to logout. Please try again.');
     } finally {
       authUtils.clearAuth();

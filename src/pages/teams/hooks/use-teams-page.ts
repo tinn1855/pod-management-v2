@@ -7,7 +7,7 @@ import {
   updateTeamSchema,
   type CreateTeamFormData,
   type UpdateTeamFormData,
-} from '@/lib/team.schema';
+} from '@/schemas/team.schema';
 import type { Team } from '@/types/team.types';
 
 export function useTeamsPage() {

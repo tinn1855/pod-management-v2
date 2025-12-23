@@ -18,7 +18,7 @@ export interface User {
 
 export interface CreateUserDto {
   name: string;
-  email: string;
+  email: string | undefined;
   password?: string;
   roleId: string;
   teamId?: string;

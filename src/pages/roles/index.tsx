@@ -6,6 +6,7 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
+import { Heading } from '@/components/ui/heading';
 import { useRolesPage } from './hooks/use-roles-page';
 import { RolesTable } from './components/roles-table';
 import { CreateRoleDialog } from './components/create-role-dialog';
@@ -54,9 +55,7 @@ export function RolesPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">
-            Roles Management
-          </h1>
+          <Heading variant="h1">Roles Management</Heading>
           <p className="text-muted-foreground">
             Manage roles and their permissions
           </p>

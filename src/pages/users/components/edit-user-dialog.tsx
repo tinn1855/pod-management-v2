@@ -24,7 +24,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import type { UpdateUserFormData } from '@/lib/user.schema';
+import type { UpdateUserFormData } from '@/schemas/user.schema';
 import type { Role } from '@/types/role.types';
 import type { Team } from '@/types/team.types';
 
