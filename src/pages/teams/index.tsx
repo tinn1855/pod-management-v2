@@ -17,11 +17,14 @@ import { DeleteTeamDialog } from './components/delete-team-dialog';
 export function TeamsPage() {
   const {
     teams,
+    allTeams,
+    allUsers,
     pagination,
     selectedTeam,
     teamToDelete,
     isLoading,
     isInitialLoading,
+    isLoadingUsers,
     isCreateOpen,
     setIsCreateOpen,
     isEditOpen,
@@ -39,6 +42,7 @@ export function TeamsPage() {
     handleDeleteClick,
     handleDeleteConfirm,
     handleViewDetail,
+    handleUpdateUserTeam,
     setTeamToDelete,
   } = useTeamsPage();
 
@@ -71,6 +75,7 @@ export function TeamsPage() {
         <CardContent>
           <TeamsTable
             teams={teams}
+            users={allUsers}
             isLoading={isLoading}
             isInitialLoading={isInitialLoading}
             pagination={pagination}
@@ -94,6 +99,10 @@ export function TeamsPage() {
         open={isDetailOpen}
         onOpenChange={setIsDetailOpen}
         team={selectedTeam}
+        users={allUsers}
+        allTeams={allTeams}
+        isLoadingUsers={isLoadingUsers}
+        onUpdateUserTeam={handleUpdateUserTeam}
       />
 
       <DeleteTeamDialog

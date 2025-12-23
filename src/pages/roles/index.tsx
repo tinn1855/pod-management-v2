@@ -18,6 +18,8 @@ import { DeleteRoleDialog } from './components/delete-role-dialog';
 export function RolesPage() {
   const {
     roles,
+    allRoles,
+    allUsers,
     permissions,
     pagination,
     selectedRole,
@@ -25,6 +27,7 @@ export function RolesPage() {
     selectedPermissionIds,
     isLoading,
     isInitialLoading,
+    isLoadingUsers,
     isCreateOpen,
     setIsCreateOpen,
     isEditOpen,
@@ -47,6 +50,7 @@ export function RolesPage() {
     handleViewDetail,
     handleOpenPermissions,
     handleAssignPermissions,
+    handleUpdateUserRole,
     togglePermission,
     setRoleToDelete,
   } = useRolesPage();
@@ -116,6 +120,10 @@ export function RolesPage() {
         open={isDetailOpen}
         onOpenChange={setIsDetailOpen}
         role={selectedRole}
+        users={allUsers}
+        allRoles={allRoles}
+        isLoadingUsers={isLoadingUsers}
+        onUpdateUserRole={handleUpdateUserRole}
       />
 
       <DeleteRoleDialog

@@ -1,3 +1,4 @@
+import { useMemo } from 'react';
 import { Pencil, Trash2, Eye } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
@@ -10,9 +11,11 @@ import {
 } from '@/components/ui/table';
 import { Skeleton } from '@/components/ui/skeleton';
 import type { Team } from '@/types/team.types';
+import type { User } from '@/types/user.types';
 
 interface TeamsTableProps {
   teams: Team[];
+  users: User[];
   isLoading: boolean;
   isInitialLoading: boolean;
   pagination: {
@@ -27,6 +30,7 @@ interface TeamsTableProps {
 
 export function TeamsTable({
   teams,
+  users,
   isLoading,
   isInitialLoading,
   pagination,
@@ -35,6 +39,14 @@ export function TeamsTable({
   onDelete,
   onPageChange,
 }: TeamsTableProps) {
+  // Calculate member count for each team
+  const teamMemberCounts = useMemo(() => {
+    const counts: Record<string, number> = {};
+    teams.forEach((team) => {
+      counts[team.id] = users.filter((user) => user.team?.id === team.id).length;
+    });
+    return counts;
+  }, [teams, users]);
   const handlePreviousPage = () => {
     onPageChange(pagination.page - 1);
   };
@@ -109,7 +121,7 @@ export function TeamsTable({
                 )}
               </TableCell>
               <TableCell>
-                {team.memberCount !== undefined ? team.memberCount : '-'}
+                {teamMemberCounts[team.id] ?? 0}
               </TableCell>
               <TableCell className="text-right">
                 <div className="flex items-center justify-end gap-2">

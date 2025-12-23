@@ -2,6 +2,8 @@ import { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useTeams } from '@/hooks/use-teams';
+import { useUsers } from '@/hooks/use-users';
+import { PAGINATION } from '@/constants';
 import {
   createTeamSchema,
   updateTeamSchema,
@@ -9,6 +11,7 @@ import {
   type UpdateTeamFormData,
 } from '@/schemas/team.schema';
 import type { Team } from '@/types/team.types';
+import type { User } from '@/types/user.types';
 
 export function useTeamsPage() {
   const {
@@ -18,9 +21,13 @@ export function useTeamsPage() {
     deleteTeam,
     isLoading,
   } = useTeams();
+  const { getUsers, updateUser } = useUsers();
 
   const [teams, setTeams] = useState<Team[]>([]);
+  const [allTeams, setAllTeams] = useState<Team[]>([]);
+  const [allUsers, setAllUsers] = useState<User[]>([]);
   const [isInitialLoading, setIsInitialLoading] = useState(true);
+  const [isLoadingUsers, setIsLoadingUsers] = useState(false);
   const [pagination, setPagination] = useState({
     page: 1,
     limit: 10,
@@ -65,9 +72,69 @@ export function useTeamsPage() {
     setIsInitialLoading(false);
   };
 
+  const loadAllTeams = async () => {
+    const allData: Team[] = [];
+    let currentPage = 1;
+    const maxLimit = PAGINATION.API_MAX_LIMIT;
+    let hasMore = true;
+
+    while (hasMore) {
+      const response = await getTeams({
+        page: currentPage,
+        limit: maxLimit,
+      });
+      if (response && response.data.length > 0) {
+        allData.push(...response.data);
+        hasMore = currentPage < response.totalPages;
+        currentPage++;
+      } else {
+        hasMore = false;
+      }
+    }
+
+    setAllTeams(allData);
+  };
+
+  const loadAllUsers = async () => {
+    setIsLoadingUsers(true);
+    const allData: User[] = [];
+    let currentPage = 1;
+    const maxLimit = PAGINATION.API_MAX_LIMIT;
+    let hasMore = true;
+
+    while (hasMore) {
+      const response = await getUsers({
+        page: currentPage,
+        limit: maxLimit,
+      });
+      if (response && response.data.length > 0) {
+        allData.push(...response.data);
+        hasMore = currentPage < response.totalPages;
+        currentPage++;
+      } else {
+        hasMore = false;
+      }
+    }
+
+    setAllUsers(allData);
+    setIsLoadingUsers(false);
+  };
+
+  const handleUpdateUserTeam = async (userId: string, teamId: string | null) => {
+    const user = await updateUser(userId, { teamId });
+    if (user) {
+      // Refresh users list
+      await loadAllUsers();
+      // Refresh teams list to update member counts
+      loadTeams();
+    }
+  };
+
   useEffect(() => {
     setIsInitialLoading(true);
     loadTeams();
+    loadAllTeams();
+    loadAllUsers();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -122,17 +189,21 @@ export function useTeamsPage() {
   const handleViewDetail = (team: Team) => {
     setSelectedTeam(team);
     setIsDetailOpen(true);
+    loadAllUsers();
   };
 
   return {
     // Data
     teams,
+    allTeams,
+    allUsers,
     pagination,
     selectedTeam,
     teamToDelete,
     // Loading states
     isLoading,
     isInitialLoading,
+    isLoadingUsers,
     // Dialog states
     isCreateOpen,
     setIsCreateOpen,
@@ -153,6 +224,7 @@ export function useTeamsPage() {
     handleDeleteClick,
     handleDeleteConfirm,
     handleViewDetail,
+    handleUpdateUserTeam,
     setTeamToDelete,
   };
 }

@@ -3,6 +3,8 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useRoles } from '@/hooks/use-roles';
 import { usePermissions } from '@/hooks/use-permissions';
+import { useUsers } from '@/hooks/use-users';
+import { PAGINATION } from '@/constants';
 import {
   createRoleSchema,
   updateRoleSchema,
@@ -12,6 +14,7 @@ import {
   type AssignPermissionsFormData,
 } from '@/schemas/role.schema';
 import type { Role, PermissionResponse } from '@/types/role.types';
+import type { User } from '@/types/user.types';
 
 export function useRolesPage() {
   const {
@@ -23,10 +26,14 @@ export function useRolesPage() {
     isLoading,
   } = useRoles();
   const { getPermissions } = usePermissions();
+  const { getUsers, updateUser } = useUsers();
 
   const [roles, setRoles] = useState<Role[]>([]);
+  const [allRoles, setAllRoles] = useState<Role[]>([]);
+  const [allUsers, setAllUsers] = useState<User[]>([]);
   const [permissions, setPermissions] = useState<PermissionResponse[]>([]);
   const [isInitialLoading, setIsInitialLoading] = useState(true);
+  const [isLoadingUsers, setIsLoadingUsers] = useState(false);
   const [pagination, setPagination] = useState({
     page: 1,
     limit: 10,
@@ -89,10 +96,69 @@ export function useRolesPage() {
     }
   };
 
+  const loadAllRoles = async () => {
+    const allData: Role[] = [];
+    let currentPage = 1;
+    const maxLimit = PAGINATION.API_MAX_LIMIT;
+    let hasMore = true;
+
+    while (hasMore) {
+      const response = await getRoles({
+        page: currentPage,
+        limit: maxLimit,
+      });
+      if (response && response.data.length > 0) {
+        allData.push(...response.data);
+        hasMore = currentPage < response.totalPages;
+        currentPage++;
+      } else {
+        hasMore = false;
+      }
+    }
+
+    setAllRoles(allData);
+  };
+
+  const loadAllUsers = async () => {
+    setIsLoadingUsers(true);
+    const allData: User[] = [];
+    let currentPage = 1;
+    const maxLimit = PAGINATION.API_MAX_LIMIT;
+    let hasMore = true;
+
+    while (hasMore) {
+      const response = await getUsers({
+        page: currentPage,
+        limit: maxLimit,
+      });
+      if (response && response.data.length > 0) {
+        allData.push(...response.data);
+        hasMore = currentPage < response.totalPages;
+        currentPage++;
+      } else {
+        hasMore = false;
+      }
+    }
+
+    setAllUsers(allData);
+    setIsLoadingUsers(false);
+  };
+
+  const handleUpdateUserRole = async (userId: string, roleId: string) => {
+    const user = await updateUser(userId, { roleId });
+    if (user) {
+      // Refresh users list
+      await loadAllUsers();
+      // Refresh roles list to update user counts
+      loadRoles();
+    }
+  };
+
   useEffect(() => {
     setIsInitialLoading(true);
     loadRoles();
     loadPermissions();
+    loadAllRoles();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -143,6 +209,7 @@ export function useRolesPage() {
   const handleViewDetail = (role: Role) => {
     setSelectedRole(role);
     setIsDetailOpen(true);
+    loadAllUsers();
   };
 
   const handleOpenPermissions = (role: Role) => {
@@ -175,6 +242,8 @@ export function useRolesPage() {
   return {
     // Data
     roles,
+    allRoles,
+    allUsers,
     permissions,
     pagination,
     selectedRole,
@@ -183,6 +252,7 @@ export function useRolesPage() {
     // Loading states
     isLoading,
     isInitialLoading,
+    isLoadingUsers,
     // Dialog states
     isCreateOpen,
     setIsCreateOpen,
@@ -208,6 +278,7 @@ export function useRolesPage() {
     handleViewDetail,
     handleOpenPermissions,
     handleAssignPermissions,
+    handleUpdateUserRole,
     togglePermission,
     setRoleToDelete,
   };
