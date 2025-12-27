@@ -3,6 +3,7 @@ export const STORAGE_KEYS = {
   REFRESH_TOKEN: 'refreshToken',
   TEMP_TOKEN: 'tempToken',
   USER: 'user',
+  REMEMBER_ME: 'rememberMe',
 } as const;
 
 export const ROUTES = {
@@ -12,6 +13,7 @@ export const ROUTES = {
   PERMISSIONS: '/permissions',
   TEAMS: '/teams',
   USERS: '/users',
+  BOARDS: '/boards',
   CHANGE_PASSWORD: '/change-password',
   VERIFY_EMAIL: '/verify-email',
 } as const;

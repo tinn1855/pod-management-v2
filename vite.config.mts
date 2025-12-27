@@ -24,7 +24,7 @@ export default defineConfig(() => ({
     dedupe: ['react', 'react-dom'],
   },
   optimizeDeps: {
-    include: ['react', 'react-dom', 'react-router-dom'],
+    include: ['react', 'react-dom', 'react-router-dom', '@tanstack/react-query'],
   },
   build: {
     outDir: './dist/pod-management-v2',

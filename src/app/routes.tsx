@@ -8,6 +8,7 @@ import { RolesPage } from '@/pages/roles';
 import { PermissionsPage } from '@/pages/permissions';
 import { TeamsPage } from '@/pages/teams';
 import { UsersPage } from '@/pages/users';
+import { BoardsPage } from '@/pages/boards';
 import { NotFoundPage } from '@/pages/not-found';
 import DefaultLayout from '@/layout/default';
 
@@ -76,6 +77,14 @@ export function AppRoutes() {
           element={
             <AuthGuard>
               <UsersPage />
+            </AuthGuard>
+          }
+        />
+        <Route
+          path="/boards"
+          element={
+            <AuthGuard>
+              <BoardsPage />
             </AuthGuard>
           }
         />
