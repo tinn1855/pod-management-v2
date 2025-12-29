@@ -153,7 +153,10 @@ export const authUtils = {
   },
 
   isAuthenticated: (): boolean => {
-    return !!authUtils.getAccessToken();
+    // Check if accessToken exists OR user exists in storage (which means logged in, just need to refresh)
+    const accessToken = authUtils.getAccessToken();
+    const user = authUtils.getUser();
+    return !!accessToken || !!user;
   },
 };
 
