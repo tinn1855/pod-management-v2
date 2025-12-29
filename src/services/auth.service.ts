@@ -77,15 +77,17 @@ export const authService = {
     );
     return response.data;
   },
-  refreshToken: async (refreshToken: string): Promise<RefreshTokenResponse> => {
+  refreshToken: async (): Promise<RefreshTokenResponse> => {
     // Use axios directly to avoid interceptor loop
+    // Browser will automatically send cookie with refreshToken
     const response = await axios.post<RefreshTokenResponse>(
       `${import.meta.env.VITE_BASE_URL || 'https://pod-api-v2.onrender.com'}/auth/refresh`,
-      { refreshToken },
+      {},
       {
         headers: {
           'Content-Type': 'application/json',
         },
+        withCredentials: true, // Ensure cookies are sent
       }
     );
     return response.data;

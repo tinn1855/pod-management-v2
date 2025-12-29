@@ -8,6 +8,7 @@ export const httpClient = axios.create({
   headers: {
     'Content-Type': 'application/json',
   },
+  withCredentials: true, // Enable sending cookies (including refreshToken cookie)
 });
 
 // Flag to prevent multiple refresh attempts
@@ -82,25 +83,14 @@ httpClient.interceptors.response.use(
       originalRequest._retry = true;
       isRefreshing = true;
 
-      const refreshToken = authUtils.getRefreshToken();
-
-      // If no refresh token, redirect to login
-      if (!refreshToken) {
-        isRefreshing = false;
-        processQueue(new Error('No refresh token available'), null);
-        authUtils.clearAuth();
-        if (currentPath !== ROUTES.LOGIN) {
-          window.location.href = ROUTES.LOGIN;
-        }
-        return Promise.reject(error);
-      }
-
       try {
         // Attempt to refresh token
-        const response = await authService.refreshToken(refreshToken);
+        // Browser will automatically send refreshToken cookie
+        const response = await authService.refreshToken();
 
         // Update access token in memory
-        authUtils.updateTokens(response.accessToken, refreshToken);
+        // RefreshToken is stored in httpOnly cookie, so we don't need to manage it
+        authUtils.updateTokens(response.accessToken);
 
         // Update Authorization header
         if (originalRequest.headers) {
@@ -114,13 +104,26 @@ httpClient.interceptors.response.use(
         // Retry original request
         return httpClient(originalRequest);
       } catch (refreshError) {
-        // Refresh failed, clear auth and redirect to login
         isRefreshing = false;
-        processQueue(refreshError as Error, null);
-        authUtils.clearAuth();
+        
+        // Check if it's an axios error with response (API error)
+        const isAxiosError = refreshError && typeof refreshError === 'object' && 'isAxiosError' in refreshError;
+        const errorStatus = isAxiosError && (refreshError as AxiosError).response?.status;
+        
+        // Only logout on authentication errors (401, 403), not on network errors
+        // Network errors or temporary issues should not logout the user
+        if (errorStatus === 401 || errorStatus === 403) {
+          // Refresh token is invalid/expired, logout
+          processQueue(refreshError as Error, null);
+          authUtils.clearAuth();
 
-        if (currentPath !== ROUTES.LOGIN) {
-          window.location.href = ROUTES.LOGIN;
+          if (currentPath !== ROUTES.LOGIN) {
+            window.location.href = ROUTES.LOGIN;
+          }
+        } else {
+          // Network error or other temporary issue, don't logout
+          // Just reject the request so it can be retried
+          processQueue(refreshError as Error, null);
         }
 
         return Promise.reject(refreshError);

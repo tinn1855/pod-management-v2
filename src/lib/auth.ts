@@ -30,8 +30,11 @@ export const authUtils = {
   },
 
   getRefreshToken: (): string | null => {
-    // Refresh token stored in memory only (not in storage)
-    return refreshTokenInMemory;
+    // Check memory first, then fallback to storage (for persistence after reload)
+    if (refreshTokenInMemory) {
+      return refreshTokenInMemory;
+    }
+    return getFromStorage(STORAGE_KEYS.REFRESH_TOKEN);
   },
 
   setAccessTokenInMemory: (token: string | null): void => {
@@ -73,11 +76,13 @@ export const authUtils = {
     // Store accessToken in memory only (not in storage)
     accessTokenInMemory = accessToken;
     
-    // Store refreshToken in memory only (not in storage)
+    // Store refreshToken in memory and storage (for persistence after reload)
     if (refreshToken) {
       refreshTokenInMemory = refreshToken;
+      storage.setItem(STORAGE_KEYS.REFRESH_TOKEN, refreshToken);
     } else {
       refreshTokenInMemory = null;
+      removeFromStorage(STORAGE_KEYS.REFRESH_TOKEN);
     }
     
     // Only store user and rememberMe preference in storage
@@ -121,9 +126,16 @@ export const authUtils = {
     // Update accessToken in memory only
     accessTokenInMemory = accessToken;
     
-    // Update refreshToken in memory only (don't store it)
+    // Update refreshToken in memory and storage (if new refreshToken is provided)
     if (refreshToken !== undefined) {
       refreshTokenInMemory = refreshToken || null;
+      if (refreshToken) {
+        const rememberMe = authUtils.getRememberMe();
+        const storage = getStorage(rememberMe);
+        storage.setItem(STORAGE_KEYS.REFRESH_TOKEN, refreshToken);
+      } else {
+        removeFromStorage(STORAGE_KEYS.REFRESH_TOKEN);
+      }
     }
   },
 
