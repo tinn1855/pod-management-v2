@@ -17,13 +17,29 @@ function removeFromStorage(key: string): void {
   sessionStorage.removeItem(key);
 }
 
+// Access token stored in memory only (not in storage)
+let accessTokenInMemory: string | null = null;
+
+// Refresh token stored in storage (for 401 refresh flow)
+let refreshTokenInMemory: string | null = null;
+
 export const authUtils = {
   getAccessToken: (): string | null => {
-    return getFromStorage(STORAGE_KEYS.ACCESS_TOKEN);
+    // Access token stored in memory only
+    return accessTokenInMemory;
   },
 
   getRefreshToken: (): string | null => {
-    return getFromStorage(STORAGE_KEYS.REFRESH_TOKEN);
+    // Refresh token stored in memory only (not in storage)
+    return refreshTokenInMemory;
+  },
+
+  setAccessTokenInMemory: (token: string | null): void => {
+    accessTokenInMemory = token;
+  },
+
+  setRefreshTokenInMemory: (token: string | null): void => {
+    refreshTokenInMemory = token;
   },
 
   getTempToken: (): string | null => {
@@ -42,7 +58,7 @@ export const authUtils = {
 
   setAuth: (
     accessToken: string,
-    refreshToken: string,
+    refreshToken: string | undefined,
     user: User,
     rememberMe = true
   ): void => {
@@ -54,10 +70,19 @@ export const authUtils = {
     removeFromStorage(STORAGE_KEYS.USER);
     removeFromStorage(STORAGE_KEYS.TEMP_TOKEN);
     
-    // Set in appropriate storage
-    storage.setItem(STORAGE_KEYS.ACCESS_TOKEN, accessToken);
-    storage.setItem(STORAGE_KEYS.REFRESH_TOKEN, refreshToken);
+    // Store accessToken in memory only (not in storage)
+    accessTokenInMemory = accessToken;
+    
+    // Store refreshToken in memory only (not in storage)
+    if (refreshToken) {
+      refreshTokenInMemory = refreshToken;
+    } else {
+      refreshTokenInMemory = null;
+    }
+    
+    // Only store user and rememberMe preference in storage
     storage.setItem(STORAGE_KEYS.USER, JSON.stringify(user));
+    storage.setItem(STORAGE_KEYS.REMEMBER_ME, JSON.stringify(rememberMe));
   },
 
   setTempToken: (tempToken: string, user: User, rememberMe = true): void => {
@@ -69,18 +94,50 @@ export const authUtils = {
     removeFromStorage(STORAGE_KEYS.USER);
     removeFromStorage(STORAGE_KEYS.REFRESH_TOKEN);
     
-    // Store tempToken separately
+    // Store tempToken in memory as accessToken
+    accessTokenInMemory = tempToken;
+    refreshTokenInMemory = null; // Clear refresh token when using temp token
+    
+    // Store tempToken in storage for backward compatibility
     storage.setItem(STORAGE_KEYS.TEMP_TOKEN, tempToken);
-    // Use tempToken as accessToken temporarily
-    storage.setItem(STORAGE_KEYS.ACCESS_TOKEN, tempToken);
     storage.setItem(STORAGE_KEYS.USER, JSON.stringify(user));
+    storage.setItem(STORAGE_KEYS.REMEMBER_ME, JSON.stringify(rememberMe));
+  },
+
+  getRememberMe: (): boolean => {
+    const rememberMeStr = getFromStorage(STORAGE_KEYS.REMEMBER_ME);
+    if (!rememberMeStr) return true; // Default to true
+    try {
+      return JSON.parse(rememberMeStr) as boolean;
+    } catch {
+      return true;
+    }
+  },
+
+  updateTokens: (
+    accessToken: string,
+    refreshToken?: string
+  ): void => {
+    // Update accessToken in memory only
+    accessTokenInMemory = accessToken;
+    
+    // Update refreshToken in memory only (don't store it)
+    if (refreshToken !== undefined) {
+      refreshTokenInMemory = refreshToken || null;
+    }
   },
 
   clearAuth: (): void => {
+    // Clear memory
+    accessTokenInMemory = null;
+    refreshTokenInMemory = null;
+    
+    // Clear storage
     removeFromStorage(STORAGE_KEYS.ACCESS_TOKEN);
     removeFromStorage(STORAGE_KEYS.REFRESH_TOKEN);
     removeFromStorage(STORAGE_KEYS.TEMP_TOKEN);
     removeFromStorage(STORAGE_KEYS.USER);
+    removeFromStorage(STORAGE_KEYS.REMEMBER_ME);
   },
 
   isAuthenticated: (): boolean => {

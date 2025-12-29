@@ -1,5 +1,10 @@
+import axios from 'axios';
 import { httpClient } from '@/lib/http';
-import type { LoginRequest, LoginResponse } from '@/types/auth.types';
+import type {
+  LoginRequest,
+  LoginResponse,
+  RefreshTokenResponse,
+} from '@/types/auth.types';
 
 export interface ChangePasswordRequest {
   newPassword: string;
@@ -15,6 +20,10 @@ export interface ChangePasswordResponse {
     email: string;
     status: string;
     mustChangePassword: boolean;
+    org: {
+      id: string;
+      name: string;
+    };
     role: {
       id: string;
       name: string;
@@ -65,6 +74,19 @@ export const authService = {
   resendVerificationEmail: async (): Promise<ResendVerificationEmailResponse> => {
     const response = await httpClient.post<ResendVerificationEmailResponse>(
       '/auth/resend-verification-email'
+    );
+    return response.data;
+  },
+  refreshToken: async (refreshToken: string): Promise<RefreshTokenResponse> => {
+    // Use axios directly to avoid interceptor loop
+    const response = await axios.post<RefreshTokenResponse>(
+      `${import.meta.env.VITE_BASE_URL || 'https://pod-api-v2.onrender.com'}/auth/refresh`,
+      { refreshToken },
+      {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      }
     );
     return response.data;
   },

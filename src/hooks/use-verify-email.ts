@@ -23,8 +23,9 @@ export function useVerifyEmail() {
         const updatedUser = await userService.getCurrentUser();
         const accessToken = authUtils.getAccessToken();
         const refreshToken = authUtils.getRefreshToken();
-        if (accessToken && refreshToken) {
-          authUtils.setAuth(accessToken, refreshToken, updatedUser);
+        const rememberMe = authUtils.getRememberMe();
+        if (accessToken) {
+          authUtils.setAuth(accessToken, refreshToken || undefined, updatedUser, rememberMe);
         }
       } catch (err) {
         // If fetching user fails, continue anyway

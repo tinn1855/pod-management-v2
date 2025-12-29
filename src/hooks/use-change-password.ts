@@ -31,6 +31,10 @@ export function useChangePassword() {
           email: response.user.email,
           status: response.user.status,
           mustChangePassword: false, // Always set to false after successful password change
+          org: {
+            id: response.user.org.id,
+            name: response.user.org.name,
+          },
           role: {
             id: response.user.role.id,
             name: response.user.role.name,

@@ -22,7 +22,7 @@ export function useLogin() {
       // If tempToken is provided, use it instead of accessToken
       if (response.tempToken) {
         authUtils.setTempToken(response.tempToken, response.user, rememberMe);
-      } else if (response.accessToken && response.refreshToken) {
+      } else if (response.accessToken) {
         authUtils.setAuth(
           response.accessToken,
           response.refreshToken,
