@@ -9,6 +9,10 @@ export interface User {
   email: string;
   status: string;
   mustChangePassword: boolean;
+  org: {
+    id: string;
+    name: string;
+  };
   role: {
     id: string;
     name: string;
@@ -16,13 +20,17 @@ export interface User {
   team: {
     id: string;
     name: string;
-  };
+  } | null;
 }
 
 export interface LoginResponse {
-  accessToken?: string;
+  accessToken: string;
   refreshToken?: string;
   tempToken?: string;
   user: User;
+}
+
+export interface RefreshTokenResponse {
+  accessToken: string;
 }
 
