@@ -1,12 +1,18 @@
 import { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import {
+  Building2,
   ChevronRight,
+  Globe,
   Home,
   Inbox,
+  LayoutGrid,
   LogOut,
+  Monitor,
+  Plug,
   Settings,
   Shield,
+  Store,
   User,
   Users,
   Users2,
@@ -99,6 +105,12 @@ const navGroups: NavGroup[] = [
         icon: User,
         tooltip: 'Users Management',
       },
+      {
+        title: 'Platforms',
+        url: '/platforms',
+        icon: LayoutGrid,
+        tooltip: 'Platforms Management',
+      },
     ],
   },
 ];
@@ -113,8 +125,7 @@ export function AppSidebar() {
     try {
       setIsLoggingOut(true);
       await authService.logout();
-      toast.success('Logged out successfully');
-    } catch (error) {
+    } catch {
       toast.error('Failed to logout. Please try again.');
     } finally {
       authUtils.clearAuth();

@@ -14,6 +14,7 @@ export const ROUTES = {
   TEAMS: '/teams',
   USERS: '/users',
   BOARDS: '/boards',
+  PLATFORMS: '/platforms',
   CHANGE_PASSWORD: '/change-password',
   VERIFY_EMAIL: '/verify-email',
 } as const;

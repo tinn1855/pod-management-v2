@@ -30,7 +30,7 @@ export function useLogin() {
           rememberMe
         );
       }
-      toast.success('Login successful!');
+      toast.success('Login successfully!');
       if (response.user.mustChangePassword) {
         navigate(ROUTES.CHANGE_PASSWORD);
       } else {
