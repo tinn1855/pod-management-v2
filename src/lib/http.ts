@@ -14,10 +14,11 @@ export const httpClient = axios.create({
 // Flag to prevent multiple refresh attempts
 let isRefreshing = false;
 // Queue to store failed requests during token refresh
-let failedQueue: Array<{
+type QueuedRequest = {
   resolve: (value?: unknown) => void;
   reject: (error?: unknown) => void;
-}> = [];
+};
+let failedQueue: QueuedRequest[] = [];
 
 // Process queued requests after token refresh
 const processQueue = (error: Error | null, token: string | null = null) => {
@@ -65,8 +66,11 @@ httpClient.interceptors.response.use(
 
       // If already refreshing, queue this request
       if (isRefreshing) {
-        return new Promise((resolve, reject) => {
-          failedQueue.push({ resolve, reject });
+        return new Promise<string>((resolve, reject) => {
+          failedQueue.push({ 
+            resolve: (token) => resolve(token as string), 
+            reject 
+          });
         })
           .then((token) => {
             if (token && originalRequest.headers) {
@@ -79,50 +83,55 @@ httpClient.interceptors.response.use(
           });
       }
 
-      // Mark request as retried
+      // Mark request as retried to prevent infinite loop
       originalRequest._retry = true;
       isRefreshing = true;
 
       try {
         // Attempt to refresh token
-        // Browser will automatically send refreshToken cookie
+        // Browser will automatically send refreshToken from httpOnly cookie
         const response = await authService.refreshToken();
 
-        // Update access token in memory
-        // RefreshToken is stored in httpOnly cookie, so we don't need to manage it
+        // Update access token in memory only
+        // RefreshToken is stored in httpOnly cookie, managed by browser
         authUtils.updateTokens(response.accessToken);
 
-        // Update Authorization header
+        // Update Authorization header for original request
         if (originalRequest.headers) {
           originalRequest.headers.Authorization = `Bearer ${response.accessToken}`;
         }
 
-        // Process queued requests
+        // Process queued requests with new token
         processQueue(null, response.accessToken);
         isRefreshing = false;
 
-        // Retry original request
+        // Retry original request with new token
         return httpClient(originalRequest);
       } catch (refreshError) {
+        // Reset refreshing flag before processing queue
         isRefreshing = false;
         
         // Check if it's an axios error with response (API error)
-        const isAxiosError = refreshError && typeof refreshError === 'object' && 'isAxiosError' in refreshError;
-        const errorStatus = isAxiosError && (refreshError as AxiosError).response?.status;
+        const isAxiosError = refreshError && 
+          typeof refreshError === 'object' && 
+          'isAxiosError' in refreshError;
+        const errorStatus = isAxiosError && 
+          (refreshError as AxiosError).response?.status;
         
         // Only logout on authentication errors (401, 403), not on network errors
         // Network errors or temporary issues should not logout the user
         if (errorStatus === 401 || errorStatus === 403) {
-          // Refresh token is invalid/expired, logout
+          // Refresh token is invalid/expired, logout user
           processQueue(refreshError as Error, null);
           authUtils.clearAuth();
 
+          // Redirect to login if not already there
           if (currentPath !== ROUTES.LOGIN) {
             window.location.href = ROUTES.LOGIN;
           }
         } else {
           // Network error or other temporary issue, don't logout
-          // Just reject the request so it can be retried
+          // Just reject the queued requests so they can be retried
           processQueue(refreshError as Error, null);
         }
 

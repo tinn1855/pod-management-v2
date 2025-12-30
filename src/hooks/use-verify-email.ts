@@ -22,10 +22,10 @@ export function useVerifyEmail() {
       try {
         const updatedUser = await userService.getCurrentUser();
         const accessToken = authUtils.getAccessToken();
-        const refreshToken = authUtils.getRefreshToken();
         const rememberMe = authUtils.getRememberMe();
         if (accessToken) {
-          authUtils.setAuth(accessToken, refreshToken || undefined, updatedUser, rememberMe);
+          // refreshToken is stored in httpOnly cookie, not needed here
+          authUtils.setAuth(accessToken, undefined, updatedUser, rememberMe);
         }
       } catch (err) {
         // If fetching user fails, continue anyway

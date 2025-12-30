@@ -44,7 +44,7 @@ export function EditPlatformDialog({
         <Form {...form}>
           <form
             onSubmit={form.handleSubmit(onSubmit)}
-            className="space-y-4 py-4 overflow-y-auto"
+            className="space-y-4 py-4"
           >
             <FormField
               control={form.control}
@@ -70,4 +70,3 @@ export function EditPlatformDialog({
     </Dialog>
   );
 }
-

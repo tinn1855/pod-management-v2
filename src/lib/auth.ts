@@ -20,8 +20,8 @@ function removeFromStorage(key: string): void {
 // Access token stored in memory only (not in storage)
 let accessTokenInMemory: string | null = null;
 
-// Refresh token stored in storage (for 401 refresh flow)
-let refreshTokenInMemory: string | null = null;
+// Note: RefreshToken is stored in httpOnly cookie, managed by browser
+// We don't store it in memory or localStorage for security
 
 export const authUtils = {
   getAccessToken: (): string | null => {
@@ -30,19 +30,14 @@ export const authUtils = {
   },
 
   getRefreshToken: (): string | null => {
-    // Check memory first, then fallback to storage (for persistence after reload)
-    if (refreshTokenInMemory) {
-      return refreshTokenInMemory;
-    }
-    return getFromStorage(STORAGE_KEYS.REFRESH_TOKEN);
+    // RefreshToken is stored in httpOnly cookie, not accessible via JavaScript
+    // This method is kept for backward compatibility but always returns null
+    // The refreshToken is automatically sent by browser via cookies
+    return null;
   },
 
   setAccessTokenInMemory: (token: string | null): void => {
     accessTokenInMemory = token;
-  },
-
-  setRefreshTokenInMemory: (token: string | null): void => {
-    refreshTokenInMemory = token;
   },
 
   getTempToken: (): string | null => {
@@ -76,14 +71,9 @@ export const authUtils = {
     // Store accessToken in memory only (not in storage)
     accessTokenInMemory = accessToken;
     
-    // Store refreshToken in memory and storage (for persistence after reload)
-    if (refreshToken) {
-      refreshTokenInMemory = refreshToken;
-      storage.setItem(STORAGE_KEYS.REFRESH_TOKEN, refreshToken);
-    } else {
-      refreshTokenInMemory = null;
-      removeFromStorage(STORAGE_KEYS.REFRESH_TOKEN);
-    }
+    // Note: refreshToken is stored in httpOnly cookie by the server
+    // We don't store it in localStorage/sessionStorage for security
+    // The refreshToken parameter is kept for backward compatibility but ignored
     
     // Only store user and rememberMe preference in storage
     storage.setItem(STORAGE_KEYS.USER, JSON.stringify(user));
@@ -101,7 +91,9 @@ export const authUtils = {
     
     // Store tempToken in memory as accessToken
     accessTokenInMemory = tempToken;
-    refreshTokenInMemory = null; // Clear refresh token when using temp token
+    
+    // Note: refreshToken is managed by browser via httpOnly cookie
+    // No need to clear it manually
     
     // Store tempToken in storage for backward compatibility
     storage.setItem(STORAGE_KEYS.TEMP_TOKEN, tempToken);
@@ -126,23 +118,14 @@ export const authUtils = {
     // Update accessToken in memory only
     accessTokenInMemory = accessToken;
     
-    // Update refreshToken in memory and storage (if new refreshToken is provided)
-    if (refreshToken !== undefined) {
-      refreshTokenInMemory = refreshToken || null;
-      if (refreshToken) {
-        const rememberMe = authUtils.getRememberMe();
-        const storage = getStorage(rememberMe);
-        storage.setItem(STORAGE_KEYS.REFRESH_TOKEN, refreshToken);
-      } else {
-        removeFromStorage(STORAGE_KEYS.REFRESH_TOKEN);
-      }
-    }
+    // Note: refreshToken is stored in httpOnly cookie, managed by browser
+    // The refreshToken parameter is kept for backward compatibility but ignored
+    // Server automatically updates the refreshToken cookie when refreshing
   },
 
   clearAuth: (): void => {
     // Clear memory
     accessTokenInMemory = null;
-    refreshTokenInMemory = null;
     
     // Clear storage
     removeFromStorage(STORAGE_KEYS.ACCESS_TOKEN);
@@ -150,6 +133,9 @@ export const authUtils = {
     removeFromStorage(STORAGE_KEYS.TEMP_TOKEN);
     removeFromStorage(STORAGE_KEYS.USER);
     removeFromStorage(STORAGE_KEYS.REMEMBER_ME);
+    
+    // Note: refreshToken cookie is cleared by server on logout
+    // No need to manually clear it from client side
   },
 
   isAuthenticated: (): boolean => {

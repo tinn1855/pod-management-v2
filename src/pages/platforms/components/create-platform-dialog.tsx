@@ -54,7 +54,7 @@ export function CreatePlatformDialog({
         <Form {...form}>
           <form
             onSubmit={form.handleSubmit(onSubmit)}
-            className="space-y-4 py-4 overflow-y-auto flex-1"
+            className="space-y-4  flex-1"
           >
             <FormField
               control={form.control}
@@ -80,4 +80,3 @@ export function CreatePlatformDialog({
     </Dialog>
   );
 }
-
