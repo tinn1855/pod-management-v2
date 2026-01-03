@@ -12,6 +12,8 @@ export const httpClient = axios.create({
 });
 
 // Flag to prevent multiple refresh attempts
+// Note: This is separate from the flag in auth.service.ts to avoid circular dependency
+// The authService.refreshToken() has its own deduplication logic
 let isRefreshing = false;
 // Queue to store failed requests during token refresh
 type QueuedRequest = {

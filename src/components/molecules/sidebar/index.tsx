@@ -111,6 +111,12 @@ const navGroups: NavGroup[] = [
         icon: LayoutGrid,
         tooltip: 'Platforms Management',
       },
+      {
+        title: 'Shops',
+        url: '/shops',
+        icon: Store,
+        tooltip: 'Shops Management',
+      },
     ],
   },
 ];

@@ -10,6 +10,7 @@ import { TeamsPage } from '@/pages/teams';
 import { UsersPage } from '@/pages/users';
 import { BoardsPage } from '@/pages/boards';
 import { PlatformsPage } from '@/pages/platforms';
+import { ShopsPage } from '@/pages/shops';
 import { NotFoundPage } from '@/pages/not-found';
 import DefaultLayout from '@/layout/default';
 
@@ -94,6 +95,14 @@ export function AppRoutes() {
           element={
             <AuthGuard>
               <PlatformsPage />
+            </AuthGuard>
+          }
+        />
+        <Route
+          path="/shops"
+          element={
+            <AuthGuard>
+              <ShopsPage />
             </AuthGuard>
           }
         />
